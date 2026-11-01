@@ -36,7 +36,7 @@
 
   var form = $("#rsvp"), status = $("#status"), submitBtn = $("#submit");
   var manual = !window.ENDPOINT;
-  if (manual) submitBtn.textContent = "답변 복사하기";
+  if (manual) submitBtn.textContent = "전달하기";
 
   function collect() {
     return { guestId: guest.id, name: guest.name, attend: attend.checked ? "참석" : "",
