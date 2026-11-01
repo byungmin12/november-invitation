@@ -11,21 +11,11 @@
   $("#host").textContent = P.host;
   $("#time").textContent = P.time || "추후 안내";
   $("#place").textContent = P.place || "추후 안내";
-  $("#letterName").textContent = guest.name + " 님께";
   if (P.replyBy) $("#replyBy").textContent = P.replyBy + "까지 알려주면 " + P.hostShort + "가 장을 볼 수 있어요.";
   $("#witWant").textContent = "비워두면 " + P.hostShort + " 마음대로 차립니다. 그땐 나오는 대로, 토 달지 않고 맛있게 드시는 걸로.";
 
-  // 봉투: 누르거나, 2.5초 지나면 저절로 열림
-  var env = $("#envelope"), opened = false;
-  function openEnvelope() {
-    if (opened) return; opened = true;
-    $(".env").classList.add("open");
-    setTimeout(function () { env.classList.add("open"); document.body.classList.add("ready"); }, 700);
-    // 애니메이션이 어떤 이유로든 안 돌아도 내용은 보이게
-    setTimeout(function () { document.body.classList.add("revealed"); }, 2600);
-  }
-  env.addEventListener("click", openEnvelope);
-  setTimeout(openEnvelope, 2500);
+  // 애니메이션이 어떤 이유로든 안 돌아도 내용은 보이게
+  setTimeout(function () { document.body.classList.add("revealed"); }, 2500);
 
   // 참석 토글 문구
   var attend = $("#attendYes"), attendLabel = $("#attendLabel");
