@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>최지원님께 · 11월의 저녁 초대</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body data-guest="choi-jiwon">
+<main class="card">
+  <p class="eyebrow">Invitation · 2026.11.21</p>
+  <h1 id="title">11월의 저녁 초대</h1>
+  <p class="to"><b id="guestName">최지원</b> 님께</p>
+
+  <p class="lead">
+    올해도 어느새 11월이에요. 좋은 사람들 모아 따뜻한 저녁 한 끼 같이 하려고요.
+    메뉴를 짜기 전에 못 먹는 음식이 있는지만 미리 알려주세요. 그 외엔 몸만 오면 돼요.
+  </p>
+
+  <dl class="info">
+    <dt>날짜</dt><dd id="date">2026년 11월 21일 토요일</dd>
+    <dt>시간</dt><dd id="time">추후 안내</dd>
+    <dt>장소</dt><dd id="place">추후 안내</dd>
+    <dt>호스트</dt><dd id="host"></dd>
+  </dl>
+
+  <hr class="rule">
+
+  <form id="rsvp" novalidate>
+    <fieldset>
+      <legend>올 수 있어요?</legend>
+      <div class="choices">
+        <label class="chip"><input type="radio" name="attend" value="참석" id="attendYes"><span>참석할게요</span></label>
+        <label class="chip"><input type="radio" name="attend" value="미정" id="attendMaybe"><span>아직 몰라요</span></label>
+        <label class="chip"><input type="radio" name="attend" value="불참" id="attendNo"><span>이번엔 못 가요</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>못 먹는 음식이 있나요?</legend>
+      <p class="hint">알레르기든 그냥 싫은 거든 다 괜찮아요. 해당하는 걸 모두 골라주세요.</p>
+      <div class="choices" id="foods"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>그 외에 피해야 할 것</legend>
+      <input type="text" id="other" placeholder="예: 복숭아, 내장류, 너무 짠 음식…">
+    </fieldset>
+
+    <fieldset>
+      <legend>하고 싶은 말 <span class="muted small">(선택)</span></legend>
+      <textarea id="note" placeholder="늦게 도착할 것 같다, 뭐 가져가면 좋을지 등 아무 말이나"></textarea>
+    </fieldset>
+
+    <div class="actions">
+      <button type="submit" id="submit">답변 보내기</button>
+      <span class="muted small" id="replyBy"></span>
+    </div>
+    <p class="status" id="status" aria-live="polite"></p>
+    <pre class="copybox" id="copyboxInline" hidden></pre>
+  </form>
+
+  <section class="done" id="done" hidden>
+    <h2>고마워요!</h2>
+    <p>답변 잘 받았어요. 11월 21일에 만나요.</p>
+    <p class="small muted" id="copyHint" hidden></p>
+    <pre class="copybox" id="copybox" hidden></pre>
+  </section>
+</main>
+<script src="../config.js"></script>
+<script src="../assets/invite.js"></script>
+</body>
+</html>
