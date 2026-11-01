@@ -2,7 +2,7 @@
   var P = window.PARTY, guestId = document.body.dataset.guest;
   var guest = (window.GUESTS || []).find(function (g) { return g.id === guestId; });
   if (!guest) { document.body.innerHTML = "<div class='card'>초대장을 찾을 수 없어요.</div>"; return; }
-  var $ = function (s) { return document.querySelector(s); };
+  var $ = function (s) { return document.querySelector(s) || document.createElement("div"); };
 
   // 기본 정보 채우기
   document.title = guest.name + "님께 · " + P.title;
@@ -12,8 +12,8 @@
   $("#time").textContent = P.time || "추후 안내";
   $("#place").textContent = P.place || "추후 안내";
   $("#letterName").textContent = guest.name + " 님께";
-  if (P.replyBy) $("#replyBy").textContent = P.replyBy + "까지 알려주면 " + P.hostShort + "가 장을 잘 볼 수 있어요.";
-  $("#witWant").textContent = "안 적으면 " + P.hostShort + " 마음대로 차립니다. 그땐 그냥 맛있게 먹기. 토 달기 금지. 🫡";
+  if (P.replyBy) $("#replyBy").textContent = P.replyBy + "까지 알려주면 " + P.hostShort + "가 장을 볼 수 있어요.";
+  $("#witWant").textContent = "비워두면 " + P.hostShort + " 마음대로 차립니다. 그땐 나오는 대로, 토 달지 않고 맛있게 드시는 걸로.";
 
   // 봉투: 누르거나, 2.5초 지나면 저절로 열림
   var env = $("#envelope"), opened = false;
@@ -30,7 +30,7 @@
   // 참석 토글 문구
   var attend = $("#attendYes"), attendLabel = $("#attendLabel");
   attend.addEventListener("change", function () {
-    attendLabel.textContent = attend.checked ? "11/21 저녁, 비워뒀어요" : "참석할게요";
+    attendLabel.textContent = attend.checked ? "참석할게요. 11월 21일 저녁은 비워둘게요." : "참석할게요";
   });
 
   var form = $("#rsvp"), status = $("#status"), submitBtn = $("#submit");
@@ -55,9 +55,9 @@
     done.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
-  var witErrors = ["'참석할게요'를 눌러야 보낼 수 있어요. 네, 선택지는 하나뿐이에요.",
-                   "안 올 수는 없어요. 버튼은 하나밖에 없거든요.",
-                   "이 초대장엔 '불참' 버튼이 애초에 없습니다. 눌러주세요."];
+  var witErrors = ["'참석할게요'를 눌러야 보낼 수 있어요. 선택지는 하나뿐이에요.",
+                   "안 오는 건 선택지에 없습니다. 위의 버튼을 눌러주세요.",
+                   "이 초대장에는 '불참' 버튼이 애초에 없습니다."];
   var errCount = 0;
 
   form.addEventListener("submit", function (ev) {
