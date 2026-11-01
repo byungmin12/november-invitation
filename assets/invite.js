@@ -14,8 +14,19 @@
   if (P.replyBy) $("#replyBy").textContent = P.replyBy + "까지 알려주면 " + P.hostShort + "가 장을 볼 수 있어요.";
   $("#witWant").textContent = "비워두면 " + P.hostShort + " 마음대로 차립니다. 그땐 나오는 대로, 토 달지 않고 맛있게 드시는 걸로.";
 
-  // 애니메이션이 어떤 이유로든 안 돌아도 내용은 보이게
-  setTimeout(function () { document.body.classList.add("revealed"); }, 2500);
+  // 봉투: 도장을 누르거나, 3초 지나면 저절로 열림
+  var env = $("#envelope"), opened = false;
+  document.body.classList.add("intro");
+  function openEnvelope() {
+    if (opened) return; opened = true;
+    $(".env").classList.add("open");
+    setTimeout(function () { env.classList.add("open"); document.body.classList.add("ready"); }, 900);
+    setTimeout(function () { document.body.classList.remove("intro"); }, 1800);
+    // 애니메이션이 어떤 이유로든 안 돌아도 내용은 보이게
+    setTimeout(function () { document.body.classList.add("revealed"); }, 3400);
+  }
+  env.addEventListener("click", openEnvelope);
+  setTimeout(openEnvelope, 3000);
 
   // 참석 토글 문구
   var attend = $("#attendYes"), attendLabel = $("#attendLabel");
