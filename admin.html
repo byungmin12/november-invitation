@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>초대 답변 현황</title>
 <meta name="robots" content="noindex">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 </head>
-<body>
+<body class="ready">
+<canvas id="sky" aria-hidden="true"></canvas>
 <main class="card wide">
   <p class="eyebrow">Host only · 임시 페이지</p>
   <h1>초대 답변 현황</h1>
@@ -26,25 +27,26 @@
   <div class="summary">
     <div class="tile"><div class="n" id="nAnswered">0 / 0</div><div class="l">답변 완료</div></div>
     <div class="tile"><div class="n" id="nYes">0</div><div class="l">참석</div></div>
-    <div class="tile"><div class="n" id="nNo">0</div><div class="l">불참</div></div>
     <div class="tile"><div class="n" id="nPending">0</div><div class="l">아직 답 없음</div></div>
   </div>
 
-  <h2 class="small muted" style="margin:0 0 8px;font-weight:600">메뉴에서 빼야 할 것</h2>
-  <ul class="foodsum" id="foodsum"></ul>
+  <h2 class="sec">🚫 메뉴에서 빼야 할 것</h2>
+  <ul class="notes" id="cantList"></ul>
+  <h2 class="sec">🍲 먹고 싶대요</h2>
+  <ul class="notes want" id="wantList"></ul>
 
   <div class="tablewrap">
     <table>
-      <thead><tr><th>이름</th><th>참석</th><th>못 먹는 음식</th><th>그 외</th><th>메모</th><th>받은 시각</th></tr></thead>
+      <thead><tr><th>이름</th><th>참석</th><th>못 먹는 음식</th><th>먹고 싶은 음식</th><th>메모</th><th>받은 시각</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
   </div>
 
   <section id="manualBox" hidden>
     <hr class="rule">
-    <h2 class="small muted" style="margin:0 0 6px;font-weight:600">카톡으로 받은 답변 붙여넣기</h2>
+    <h2 class="sec">카톡으로 받은 답변 붙여넣기</h2>
     <p class="hint">손님이 복사해서 보낸 "[초대장 답변]" 텍스트를 여러 개 이어서 붙여넣어도 됩니다. 이 브라우저에만 저장돼요.</p>
-    <textarea id="paste" style="min-height:140px" placeholder="[초대장 답변]&#10;이름: 최지혜&#10;참석: 참석&#10;못 먹는 음식: 갑각류 (새우·게)&#10;그 외: 없음&#10;메모: 없음"></textarea>
+    <textarea id="paste" style="min-height:140px" placeholder="[초대장 답변]&#10;이름: 최지혜&#10;참석: 참석&#10;못 먹는 음식: 고수&#10;먹고 싶은 음식: 전골&#10;메모: 없음"></textarea>
   </section>
 
   <details>
@@ -53,6 +55,7 @@
   </details>
 </main>
 <script src="config.js"></script>
+<script src="assets/sky.js"></script>
 <script src="assets/admin.js"></script>
 </body>
 </html>

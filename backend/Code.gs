@@ -6,7 +6,7 @@
  */
 var ADMIN_KEY = "nov21-host"; // config.js 의 ADMIN_KEY 와 동일하게
 var SHEET_NAME = "답변";
-var HEADERS = ["받은 시각", "guestId", "이름", "참석", "못 먹는 음식", "그 외 못 먹는 것", "메모"];
+var HEADERS = ["받은 시각", "guestId", "이름", "참석", "못 먹는 음식", "먹고 싶은 음식", "메모"];
 
 function sheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -35,8 +35,8 @@ function doPost(e) {
       String(body.guestId),
       String(body.name),
       String(body.attend || ""),
-      (body.foods || []).join(", "),
-      String(body.other || ""),
+      String(body.cantEat || ""),
+      String(body.wantEat || ""),
       String(body.note || "")
     ]);
     return json_({ ok: true });
@@ -55,8 +55,7 @@ function doGet(e) {
     return {
       at: r[0] instanceof Date ? r[0].toISOString() : String(r[0]),
       guestId: r[1], name: r[2], attend: r[3],
-      foods: r[4] ? String(r[4]).split(",").map(function (s) { return s.trim(); }).filter(Boolean) : [],
-      other: r[5], note: r[6]
+      cantEat: r[4], wantEat: r[5], note: r[6]
     };
   });
   return json_({ ok: true, responses: out });

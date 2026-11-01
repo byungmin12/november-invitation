@@ -3,58 +3,75 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>권명회님께 · 11월의 저녁 초대</title>
+<title>권명회님께 · 첫눈 오기 전에 만나요</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700&family=Noto+Sans+KR:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jua&family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body data-guest="kwon-myeonghoe">
-<main class="card">
-  <p class="eyebrow">Invitation · 2026.11.21</p>
-  <h1 id="title">11월의 저녁 초대</h1>
-  <p class="to"><b id="guestName">권명회</b> 님께</p>
+<canvas id="sky" aria-hidden="true"></canvas>
 
-  <p class="lead">
-    올해도 어느새 11월이에요. 좋은 사람들 모아 따뜻한 저녁 한 끼 같이 하려고요.
-    메뉴를 짜기 전에 못 먹는 음식이 있는지만 미리 알려주세요. 그 외엔 몸만 오면 돼요.
+<div id="envelope" role="button" aria-label="초대장 열기">
+  <div class="env">
+    <div class="env-body"></div>
+    <div class="env-letter" id="letterName">권명회 님께</div>
+    <div class="env-sides"></div>
+    <div class="env-bottom"></div>
+    <div class="env-flap"></div>
+    <button type="button" class="seal">열기</button>
+    <p class="env-hint">꾹 눌러서 열어보세요 ✉️</p>
+  </div>
+</div>
+
+<main class="card">
+  <p class="eyebrow reveal" style="--i:0">낙엽은 떨어지고, 눈은 아직 안 오고</p>
+  <h1 id="title" class="reveal" style="--i:1">첫눈 오기 전에 만나요</h1>
+  <p class="to reveal" style="--i:2"><b id="guestName">권명회</b> 님께</p>
+
+  <div class="bigdate reveal" style="--i:3">
+    <div class="day">11.21<small>SAT</small></div>
+    <div class="l1">2026년 11월 21일 토요일 · <span id="time">오후 4시</span></div>
+    <div class="l2">해 지기 전에 모여서 밤까지 길게 먹어요</div>
+  </div>
+
+  <p class="lead reveal" style="--i:4">
+    올해도 어느새 11월. 패딩 꺼내기 전에 좋은 사람들 모아 따뜻하게 한 끼 하려고요.
+    메뉴 짜기 전에 딱 하나만 알려주세요. <span class="hand">못 먹는 거 뭐예요?</span>
   </p>
 
-  <dl class="info">
-    <dt>날짜</dt><dd id="date">2026년 11월 21일 토요일</dd>
-    <dt>시간</dt><dd id="time">추후 안내</dd>
-    <dt>장소</dt><dd id="place">추후 안내</dd>
+  <dl class="info reveal" style="--i:5">
+    <dt>장소</dt><dd id="place">서울특별시 금천구 벚꽃로 100, 101동 1004호</dd>
     <dt>호스트</dt><dd id="host"></dd>
   </dl>
 
-  <hr class="rule">
+  <hr class="rule reveal" style="--i:6">
 
   <form id="rsvp" novalidate>
-    <fieldset>
-      <legend>올 수 있어요?</legend>
-      <div class="choices">
-        <label class="chip"><input type="radio" name="attend" value="참석" id="attendYes"><span>참석할게요</span></label>
-        <label class="chip"><input type="radio" name="attend" value="미정" id="attendMaybe"><span>아직 몰라요</span></label>
-        <label class="chip"><input type="radio" name="attend" value="불참" id="attendNo"><span>이번엔 못 가요</span></label>
-      </div>
+    <fieldset class="reveal" style="--i:7">
+      <legend><span class="n">1</span>올 수 있어요?</legend>
+      <label class="attend"><input type="checkbox" id="attendYes" name="attend"><span id="attendLabel">참석할게요</span></label>
+      <p class="wit">선택지가 하나뿐이냐고요? 네. 일부러요.</p>
     </fieldset>
 
-    <fieldset>
-      <legend>못 먹는 음식이 있나요?</legend>
-      <p class="hint">알레르기든 그냥 싫은 거든 다 괜찮아요. 해당하는 걸 모두 골라주세요.</p>
-      <div class="choices" id="foods"></div>
+    <fieldset class="reveal" style="--i:8">
+      <legend><span class="n">2</span>못 먹는 음식이 있나요?</legend>
+      <p class="hint">알레르기든 그냥 싫은 거든 다 적어요. 고수, 오이, 새우, 선지… 편하게.</p>
+      <input type="text" id="cantEat" placeholder="예: 고수, 새우, 너무 매운 거">
     </fieldset>
 
-    <fieldset>
-      <legend>그 외에 피해야 할 것</legend>
-      <input type="text" id="other" placeholder="예: 복숭아, 내장류, 너무 짠 음식…">
+    <fieldset class="reveal" style="--i:9">
+      <legend><span class="n">3</span>이거 먹고 싶어요?</legend>
+      <p class="hint">요즘 당기는 거, 꼭 있었으면 하는 거 있으면 적어주세요.</p>
+      <input type="text" id="wantEat" placeholder="예: 전골, 치즈 많이, 귤">
+      <p class="wit" id="witWant"></p>
     </fieldset>
 
-    <fieldset>
-      <legend>하고 싶은 말 <span class="muted small">(선택)</span></legend>
-      <textarea id="note" placeholder="늦게 도착할 것 같다, 뭐 가져가면 좋을지 등 아무 말이나"></textarea>
+    <fieldset class="reveal" style="--i:10">
+      <legend><span class="n">4</span>하고 싶은 말 <span class="muted small">(선택)</span></legend>
+      <textarea id="note" placeholder="늦게 도착할 것 같다, 뭐 들고 갈까 등 아무 말이나"></textarea>
     </fieldset>
 
-    <div class="actions">
+    <div class="actions reveal" style="--i:11">
       <button type="submit" id="submit">답변 보내기</button>
       <span class="muted small" id="replyBy"></span>
     </div>
@@ -63,13 +80,15 @@
   </form>
 
   <section class="done" id="done" hidden>
+    <div class="big">🍊</div>
     <h2>고마워요!</h2>
-    <p>답변 잘 받았어요. 11월 21일에 만나요.</p>
+    <p>답변 잘 받았어요. 11월 21일 오후 4시, 따뜻하게 입고 오세요.</p>
     <p class="small muted" id="copyHint" hidden></p>
     <pre class="copybox" id="copybox" hidden></pre>
   </section>
 </main>
 <script src="../config.js"></script>
+<script src="../assets/sky.js"></script>
 <script src="../assets/invite.js"></script>
 </body>
 </html>

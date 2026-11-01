@@ -2,7 +2,8 @@
   var $ = function (s) { return document.querySelector(s); };
   var GUESTS = window.GUESTS, P = window.PARTY;
   var manual = !window.ENDPOINT;
-  $("#dateLabel").textContent = P.dateLabel;
+  $("#dateLabel").textContent = P.dateLabel + " " + P.time;
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); };
 
   // 초대장 링크 목록
   var base = location.href.replace(/[^/]*$/, "");
@@ -10,7 +11,7 @@
   GUESTS.forEach(function (g) {
     var url = base + "invites/" + g.id + ".html";
     var li = document.createElement("li");
-    li.innerHTML = "<b>" + g.name + "</b> <code>" + url + "</code> <button type='button' class='secondary'>복사</button>";
+    li.innerHTML = "<b>" + esc(g.name) + "</b> <code>" + esc(url) + "</code> <button type='button' class='secondary'>복사</button>";
     li.querySelector("button").addEventListener("click", function (ev) {
       var b = ev.currentTarget;
       (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(
@@ -28,9 +29,9 @@
       var get = function (k) { var m = block.match(new RegExp("^\\s*" + k + ":\\s*(.*)$", "m")); return m ? m[1].trim() : ""; };
       var name = get("이름"); if (!name) return;
       var g = GUESTS.find(function (x) { return x.name === name; });
-      var foods = get("못 먹는 음식"); foods = (!foods || foods === "없음") ? [] : foods.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
-      var clean = function (v) { return v === "없음" ? "" : v; };
-      out.push({ guestId: g ? g.id : name, name: name, attend: clean(get("참석")), foods: foods, other: clean(get("그 외")), note: clean(get("메모")), at: "" });
+      var clean = function (v) { return (v === "없음" || v === "미응답") ? "" : v; };
+      out.push({ guestId: g ? g.id : name, name: name, attend: clean(get("참석")),
+                 cantEat: clean(get("못 먹는 음식")), wantEat: clean(get("먹고 싶은 음식")), note: clean(get("메모")), at: "" });
     });
     return out;
   }
@@ -42,32 +43,30 @@
   }
 
   function pill(attend) {
-    if (!attend) return "<span class='pill none'>아직 답 없음</span>";
-    var cls = attend === "참석" ? "yes" : attend === "불참" ? "no" : "maybe";
-    return "<span class='pill " + cls + "'>" + attend + "</span>";
+    return attend ? "<span class='pill yes'>" + esc(attend) + "</span>" : "<span class='pill none'>아직 답 없음</span>";
+  }
+  function noteList(el, byGuest, key, emptyMsg) {
+    var items = GUESTS.filter(function (g) { return byGuest[g.id] && byGuest[g.id][key]; })
+      .map(function (g) { return "<li><b>" + esc(g.name) + "</b>" + esc(byGuest[g.id][key]) + "</li>"; });
+    el.innerHTML = items.length ? items.join("") : "<li class='empty'>" + emptyMsg + "</li>";
   }
 
   function render(responses) {
     var byGuest = latestPerGuest(responses);
-    var answered = 0, yes = 0, foodCount = {};
+    var answered = GUESTS.filter(function (g) { return byGuest[g.id]; }).length;
     var rows = GUESTS.map(function (g) {
-      var r = byGuest[g.id];
-      if (r) { answered++; if (r.attend === "참석") yes++; r.foods.forEach(function (f) { foodCount[f] = (foodCount[f] || 0) + 1; }); }
-      var foods = r && r.foods.length ? r.foods.map(function (f) { return "<span class='tag'>" + f + "</span>"; }).join("") : "<span class='muted'>—</span>";
-      return "<tr><td class='name'>" + g.name + "</td><td>" + pill(r && r.attend) + "</td><td>" + foods + "</td>" +
-             "<td>" + ((r && r.other) || "<span class='muted'>—</span>") + "</td><td>" + ((r && r.note) || "<span class='muted'>—</span>") + "</td>" +
-             "<td class='small muted'>" + (r && r.at ? new Date(r.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "") + "</td></tr>";
+      var r = byGuest[g.id] || {};
+      var cell = function (v) { return v ? esc(v) : "<span class='muted'>—</span>"; };
+      return "<tr><td class='name'>" + esc(g.name) + "</td><td>" + pill(r.attend) + "</td><td>" + cell(r.cantEat) + "</td>" +
+             "<td>" + cell(r.wantEat) + "</td><td>" + cell(r.note) + "</td>" +
+             "<td class='small muted'>" + (r.at ? new Date(r.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "") + "</td></tr>";
     });
     $("#rows").innerHTML = rows.join("");
     $("#nAnswered").textContent = answered + " / " + GUESTS.length;
-    $("#nYes").textContent = yes;
-    $("#nNo").textContent = GUESTS.filter(function (g) { return byGuest[g.id] && byGuest[g.id].attend === "불참"; }).length;
+    $("#nYes").textContent = GUESTS.filter(function (g) { return byGuest[g.id] && byGuest[g.id].attend === "참석"; }).length;
     $("#nPending").textContent = GUESTS.length - answered;
-
-    var keys = Object.keys(foodCount).sort(function (a, b) { return foodCount[b] - foodCount[a]; });
-    $("#foodsum").innerHTML = keys.length
-      ? keys.map(function (k) { return "<li>" + k + "<b>" + foodCount[k] + "명</b></li>"; }).join("")
-      : "<li style='background:transparent;color:var(--ink-soft);padding:0'>아직 피해야 할 음식이 없어요.</li>";
+    noteList($("#cantList"), byGuest, "cantEat", "아직 피해야 할 음식이 없어요.");
+    noteList($("#wantList"), byGuest, "wantEat", "아직 요청이 없어요. 그럼 호스트 마음대로.");
     $("#updated").textContent = "마지막 확인 " + new Date().toLocaleTimeString("ko-KR");
   }
 
