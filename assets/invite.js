@@ -20,10 +20,10 @@
   function openEnvelope() {
     if (opened) return; opened = true;
     $(".env").classList.add("open");
-    setTimeout(function () { env.classList.add("open"); document.body.classList.add("ready"); }, 900);
-    setTimeout(function () { document.body.classList.remove("intro"); }, 1800);
+    setTimeout(function () { env.classList.add("open"); document.body.classList.add("ready"); }, 2000);
+    setTimeout(function () { document.body.classList.remove("intro"); }, 2900);
     // 애니메이션이 어떤 이유로든 안 돌아도 내용은 보이게
-    setTimeout(function () { document.body.classList.add("revealed"); }, 3400);
+    setTimeout(function () { document.body.classList.add("revealed"); }, 4600);
   }
   env.addEventListener("click", openEnvelope);
   setTimeout(openEnvelope, 3000);

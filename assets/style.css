@@ -50,17 +50,37 @@ body.intro #sky { z-index: 30; }        /* 봉투가 보이는 동안엔 잎이 
 .env-flap {
   position: absolute; left: 0; right: 0; top: 0; height: 58%; z-index: 3;
   background: #dcc9aa; clip-path: polygon(0 0, 100% 0, 50% 100%);
-  transform-origin: top; transition: transform .9s cubic-bezier(.4,0,.2,1);
+  transform-origin: top; backface-visibility: visible;
 }
-.env.open .env-flap { transform: rotateX(180deg); z-index: 0; }
+@keyframes flap-open {
+  0%   { transform: rotateX(0deg);   z-index: 3; background: #dcc9aa; filter: drop-shadow(0 2px 2px rgba(60,40,20,.12)); }
+  40%  { background: #cbb694; filter: drop-shadow(0 10px 8px rgba(60,40,20,.18)); }
+  49.9%{ z-index: 3; }
+  50%  { transform: rotateX(90deg);  z-index: 0; background: #b89d78; }
+  100% { transform: rotateX(180deg); z-index: 0; background: #b39772; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+}
 .env-letter {
   position: absolute; left: 7%; right: 7%; top: 10%; height: 72%; z-index: 1;
   background: #fff; border: 1px solid #e6dfd3; display: grid; place-items: center; align-content: center; gap: 4px;
   font-family: var(--font-display); color: var(--ink); font-size: 18px; letter-spacing: .04em;
-  transition: transform .9s .35s cubic-bezier(.3,.7,.3,1);
+  box-shadow: 0 0 0 rgba(60,40,20,0);
 }
 .env-letter small { font-family: var(--font-ui); font-size: 10px; letter-spacing: .26em; text-transform: uppercase; color: var(--ink-3); }
-.env.open .env-letter { transform: translateY(-62%); }
+.env.open .env-letter { animation: letter-out 2.3s .5s cubic-bezier(.22,.7,.25,1) forwards; }
+@keyframes letter-out {
+  0%   { transform: translateY(0) rotate(0); opacity: 1; box-shadow: 0 0 0 rgba(60,40,20,0); }
+  45%  { transform: translateY(-64%) rotate(-.8deg); box-shadow: 0 14px 28px rgba(60,40,20,.18); }
+  60%  { transform: translateY(-60%) rotate(.3deg); }
+  78%  { transform: translateY(-64%) rotate(0) scale(1.03); opacity: 1; box-shadow: 0 18px 36px rgba(60,40,20,.14); }
+  100% { transform: translateY(-80%) scale(1.08); opacity: 0; box-shadow: 0 24px 40px rgba(60,40,20,0); }
+}
+.env.open { animation: env-lift 1.1s cubic-bezier(.2,.7,.2,1); }
+@keyframes env-lift { 0% { transform: translateY(0); } 35% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+.env.open .env-body, .env.open .env-sides, .env.open .env-bottom { animation: env-sink .9s 1.5s cubic-bezier(.4,0,.6,1) forwards; }
+.env.open .env-flap { animation: flap-open 1.15s cubic-bezier(.33,.02,.2,1) forwards, flap-sink .9s 1.5s cubic-bezier(.4,0,.6,1) forwards; }
+@keyframes env-sink { to { transform: translateY(36px); opacity: 0; } }
+@keyframes flap-sink { from { transform: translateY(0) rotateX(180deg); opacity: 1; } to { transform: translateY(36px) rotateX(180deg); opacity: 0; } }
+.env.open .env-hint { opacity: 0; transition: opacity .3s; }
 .seal {
   position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); z-index: 4;
   width: 60px; height: 60px; border-radius: 50%; border: 0; padding: 0; cursor: pointer;
@@ -70,10 +90,11 @@ body.intro #sky { z-index: 30; }        /* 봉투가 보이는 동안엔 잎이 
   animation: seal-breathe 2.4s ease-in-out infinite;
 }
 .seal svg { width: 26px; height: 26px; fill: #f3e6d6; }
-.env.open .seal { animation: none; transform: translate(-50%, -50%) scale(0); transition: transform .3s; }
+.env.open .seal { animation: seal-crack .4s ease-out forwards; }
+@keyframes seal-crack { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.25); opacity: 0; } }
 @keyframes seal-breathe { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 50% { transform: translate(-50%, -50%) scale(1.05); } }
 .env-hint { position: absolute; left: 0; right: 0; bottom: -48px; margin: 0; text-align: center; color: var(--ink-3); font-size: 13px; letter-spacing: .14em; }
-@media (prefers-reduced-motion: reduce) { #envelope, .env-flap, .env-letter, .seal { transition: none; } .seal { animation: none; } }
+@media (prefers-reduced-motion: reduce) { #envelope { transition: none; } .seal, .env.open, .env.open .env-flap, .env.open .env-letter, .env.open .env-body, .env.open .env-sides, .env.open .env-bottom { animation: none; } .env.open .env-letter { opacity: 0; } }
 
 /* ---- 페이지 ---- */
 .card {
