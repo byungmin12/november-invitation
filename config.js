@@ -13,7 +13,7 @@ window.PARTY = {
 // 답변 저장 위치: Google Apps Script 웹앱 URL. (설정 방법은 README.md 참고)
 // 비워두면 "답변 복사" 모드로 동작합니다. 손님이 복사한 답변을 카톡으로 보내면
 // admin.html 에 붙여넣어 확인할 수 있습니다.
-window.ENDPOINT = "";
+window.ENDPOINT = "https://script.google.com/macros/s/AKfycbylHKyLhDJVu_OVbWgPjzKgOmbx3A4lzteESDHBGA1-v4GOnh9ITfnvWCYN97VAmUmC/exec";
 
 // admin.html 에서 결과를 불러올 때 쓰는 키. backend/Code.gs 의 ADMIN_KEY 와 같아야 합니다.
 window.ADMIN_KEY = "nov21-host";

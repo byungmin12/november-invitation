@@ -42,6 +42,11 @@
     return map;
   }
 
+  function fmtTime(v) {
+    if (!v) return "";
+    var d = new Date(v);
+    return isNaN(d) ? "" : d.toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
   function pill(attend) {
     return attend ? "<span class='pill yes'>" + esc(attend) + "</span>" : "<span class='pill none'>아직 답 없음</span>";
   }
@@ -59,7 +64,7 @@
       var cell = function (v) { return v ? esc(v) : "<span class='muted'>—</span>"; };
       return "<tr><td class='name'>" + esc(g.name) + "</td><td>" + pill(r.attend) + "</td><td>" + cell(r.cantEat) + "</td>" +
              "<td>" + cell(r.wantEat) + "</td><td>" + cell(r.note) + "</td>" +
-             "<td class='small muted'>" + (r.at ? new Date(r.at).toLocaleString("ko-KR", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) : "") + "</td></tr>";
+             "<td class='small muted'>" + fmtTime(r.at) + "</td></tr>";
     });
     $("#rows").innerHTML = rows.join("");
     $("#nAnswered").textContent = answered + " / " + GUESTS.length;
