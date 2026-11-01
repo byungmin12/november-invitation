@@ -7,7 +7,7 @@
 <title>최지혜님께 · 당신을 초대합니다</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500&display=swap">
-<link rel="stylesheet" href="../assets/style.css?v=20261101b">
+<link rel="stylesheet" href="../assets/style.css?v=20261101c">
 </head>
 <body data-guest="choi-jihye">
 <canvas id="sky" aria-hidden="true"></canvas>
@@ -58,6 +58,7 @@
     <hr class="rule reveal" style="--i:8">
 
     <form id="rsvp" novalidate>
+      <p class="notice" id="existing" hidden></p>
       <fieldset class="reveal" style="--i:9">
         <legend><span class="n">01</span>올 수 있어요?</legend>
         <label class="attend"><input type="checkbox" id="attendYes" name="attend"><span id="attendLabel">참석할게요</span></label>
@@ -92,8 +93,9 @@
 
     <section class="done" id="done" hidden>
       <p class="big">Thank you</p>
-      <h2>잘 받았어요</h2>
+      <h2 id="doneTitle">잘 받았어요</h2>
       <p>11월 21일 오후 4시, 따뜻하게 입고 오세요.</p>
+      <p><button type="button" class="secondary" id="editAgain">답변 수정하기</button></p>
       <p class="small muted" id="copyHint" hidden></p>
       <pre class="copybox" id="copybox" hidden></pre>
     </section>
@@ -101,8 +103,8 @@
 
   <div class="foot" aria-hidden="true"><div class="deco deco-br"></div></div>
 </main>
-<script src="../config.js?v=20261101b"></script>
-<script src="../assets/sky.js?v=20261101b"></script>
-<script src="../assets/invite.js?v=20261101b"></script>
+<script src="../config.js?v=20261101c"></script>
+<script src="../assets/sky.js?v=20261101c"></script>
+<script src="../assets/invite.js?v=20261101c"></script>
 </body>
 </html>

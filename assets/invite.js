@@ -3,6 +3,8 @@
   var guest = (window.GUESTS || []).find(function (g) { return g.id === guestId; });
   if (!guest) { document.body.innerHTML = "<div class='card'>초대장을 찾을 수 없어요.</div>"; return; }
   var $ = function (s) { return document.querySelector(s) || document.createElement("div"); };
+  var manual = !window.ENDPOINT;
+  var storeKey = "rsvp:" + guest.id;
 
   // 기본 정보 채우기
   document.title = guest.name + "님께 · " + P.title;
@@ -28,15 +30,14 @@
   env.addEventListener("click", openEnvelope);
   setTimeout(openEnvelope, 3000);
 
-  // 참석 토글 문구
-  var attend = $("#attendYes"), attendLabel = $("#attendLabel");
-  attend.addEventListener("change", function () {
-    attendLabel.textContent = attend.checked ? "참석할게요. 11월 21일 저녁은 비워둘게요." : "참석할게요";
-  });
-
   var form = $("#rsvp"), status = $("#status"), submitBtn = $("#submit");
-  var manual = !window.ENDPOINT;
-  if (manual) submitBtn.textContent = "전달하기";
+  var attend = $("#attendYes"), attendLabel = $("#attendLabel");
+  var existing = $("#existing"), done = $("#done");
+
+  function setAttendLabel() {
+    attendLabel.textContent = attend.checked ? "참석할게요. 11월 21일 저녁은 비워둘게요." : "참석할게요";
+  }
+  attend.addEventListener("change", setAttendLabel);
 
   function collect() {
     return { guestId: guest.id, name: guest.name, attend: attend.checked ? "참석" : "",
@@ -49,12 +50,57 @@
             "메모: " + (d.note || "없음")].join("\n");
   }
 
+  function fmtWhen(v) {
+    if (!v) return "";
+    var d = new Date(v);
+    return isNaN(d) ? "" : d.toLocaleString("ko-KR", { month: "long", day: "numeric", hour: "numeric", minute: "2-digit" });
+  }
+
+  // 이미 보낸 답변이 있으면 폼에 채워 넣고 안내
+  function prefill(d, when) {
+    if (!d) return;
+    attend.checked = d.attend === "참석"; setAttendLabel();
+    $("#cantEat").value = d.cantEat || "";
+    $("#wantEat").value = d.wantEat || "";
+    $("#note").value = d.note || "";
+    var w = fmtWhen(when);
+    existing.textContent = "이미 보낸 답변이 있어요" + (w ? " (" + w + ")" : "") + ". 고칠 게 있으면 바꾸고 다시 전달하면 돼요.";
+    existing.hidden = false;
+    submitBtn.textContent = "수정해서 전달하기";
+  }
+
+  function loadExisting() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem(storeKey) || "null"); } catch (e) {}
+    if (manual) { if (saved && saved.data) prefill(saved.data, saved.at); return; }
+    fetch(window.ENDPOINT + "?guest=" + encodeURIComponent(guest.id))
+      .then(function (r) { return r.json(); })
+      .then(function (r) {
+        if (r.ok && r.response) prefill(r.response, r.response.at);
+        else if (r.ok && !r.response && saved && saved.data) prefill(saved.data, saved.at);
+      })
+      .catch(function () { if (saved && saved.data) prefill(saved.data, saved.at); });
+  }
+  loadExisting();
+
+  function remember(d) {
+    try { localStorage.setItem(storeKey, JSON.stringify({ data: d, at: new Date().toISOString() })); } catch (e) {}
+  }
+
   function showDone(text) {
     form.hidden = true;
-    var done = $("#done"); done.hidden = false;
+    done.hidden = false;
     if (text) { var pre = $("#copybox"); pre.hidden = false; pre.textContent = text; $("#copyHint").hidden = false; }
     done.scrollIntoView({ behavior: "smooth", block: "center" });
   }
+
+  $("#editAgain").addEventListener("click", function () {
+    done.hidden = true; form.hidden = false;
+    $("#copybox").hidden = true; $("#copyHint").hidden = true;
+    submitBtn.disabled = false; submitBtn.textContent = "수정해서 전달하기";
+    existing.textContent = "방금 보낸 답변이에요. 바꾸고 다시 전달하면 됩니다."; existing.hidden = false;
+    form.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
 
   var witErrors = ["'참석할게요'를 눌러야 보낼 수 있어요. 선택지는 하나뿐이에요.",
                    "안 오는 건 선택지에 없습니다. 위의 버튼을 눌러주세요.",
@@ -73,6 +119,7 @@
 
     if (manual) {
       var text = asText(d);
+      remember(d);
       var copy = navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject();
       copy.then(function () { showDone(text); $("#copyHint").textContent = "복사됐어요! " + P.hostShort + "한테 카톡으로 붙여넣어 보내주세요."; },
                 function () { showDone(text); $("#copyHint").textContent = "아래 내용을 길게 눌러 복사한 뒤 " + P.hostShort + "한테 보내주세요."; });
@@ -84,7 +131,8 @@
       .then(function (r) { return r.json(); })
       .then(function (r) {
         if (!r.ok) throw new Error(r.error || "fail");
-        try { localStorage.setItem("rsvp:" + guest.id, "1"); } catch (e) {}
+        remember(d);
+        $("#doneTitle").textContent = r.updated ? "고친 답변, 잘 받았어요" : "잘 받았어요";
         showDone();
       })
       .catch(function () {

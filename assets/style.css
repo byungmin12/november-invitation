@@ -162,6 +162,7 @@ dl.info dd { margin: 0; }
 .small { font-size: 13px; }
 
 fieldset { border: 0; padding: 0; margin: 0 0 28px; min-width: 0; }
+.notice { font-family: var(--font-ui); font-size: 13.5px; color: var(--ink-2); background: #faf7f2; border: 1px solid #ebe3d6; border-left: 3px solid var(--accent); border-radius: 4px; padding: 10px 14px; margin: 0 0 22px; }
 legend { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-bottom: 6px; padding: 0; }
 legend .n { font-family: var(--font-ui); font-weight: 400; font-size: 11px; letter-spacing: .16em; color: var(--accent); margin-right: 10px; vertical-align: 2px; }
 .hint { margin: 0 0 10px; color: var(--ink-2); font-size: 13.5px; font-family: var(--font-ui); }
