@@ -44,7 +44,7 @@ $CI browser click ".seal"           # 요소 중앙에 실제 마우스 이벤�
 $CI browser fill "#cantEat" "고수"  # value 설정 + input/change 이벤트
 $CI browser text "#status"          # textContent
 $CI browser eval 'window.ENDPOINT'  # 표현식 결과를 JSON 으로
-$CI browser swipe up|down           # 활성 카드 중앙에서 드래그, 넘김 애니메이션 종료까지 대기
+$CI browser swipe up|down [--fraction 0.6]   # 활성 카드 중앙에서 카드 높이의 일정 비율만큼 드래그, 넘김 종료까지 대기. 0.38 미만이면 되돌아온다
 $CI browser screenshot .verify/artifacts/<feature>/<name>.png
 $CI browser aria .verify/artifacts/<feature>/<name>.aria.txt   # 역할/이름 접근성 트리
 ```

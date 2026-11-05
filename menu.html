@@ -6,16 +6,17 @@ body{height:100dvh;overscroll-behavior:none}header{height:56px;padding:0 22px}ma
 .return-layer{position:absolute;z-index:40;pointer-events:none;will-change:transform;box-shadow:0 12px 30px #503c1e24;overflow:hidden;border-radius:2px 2px 9px 9px}
 
 .desc{white-space:pre-line}
+.note .desc{max-width:300px;line-height:2.05;margin-top:4px}.note h2{margin-bottom:14px}@media(max-height:690px){.note .desc{line-height:1.8;font-size:12px}}
 /* 지도 링크 · 넘김 안내 */
 .map{display:inline-block;margin-top:12px;padding:6px 10px;font:inherit;font-size:11px;letter-spacing:.22em;color:#8d6b4e;text-decoration:underline;text-decoration-color:#cdb597;text-underline-offset:5px;text-decoration-thickness:1px}.map:hover{text-decoration-color:#8d6b4e}
 .swipe{display:block;width:9px;height:9px;margin:6px auto 0;border-left:1px solid #8d6b4e;border-top:1px solid #8d6b4e;--r:45deg;--dy:-4px;transform:rotate(var(--r));animation:bob 1.8s ease-in-out infinite;opacity:.8}
 .cue{display:none;position:fixed;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom));z-index:30;margin:0;text-align:center;font-size:10px;letter-spacing:.06em;color:#9a938c}.cue.down .swipe{--r:225deg;--dy:4px}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(var(--dy)) rotate(var(--r))}}
 /* 카드 오른쪽 아래 모서리의 접힌 종이 귀 */
-.card.active:not(.curl-face)::after{content:'';position:absolute;right:0;bottom:0;width:22px;height:22px;background:linear-gradient(135deg,#eee8de 50%,#fbfaf7 50%);box-shadow:-2px -2px 5px rgba(80,60,30,.07);animation:ear 2.6s ease-in-out infinite}
-@keyframes ear{0%,100%{width:22px;height:22px}50%{width:28px;height:28px}}
-@media(hover:none) and (pointer:coarse){nav{display:none}.cue{display:block}.cover .hint{display:none}main{inset:60px 0 calc(78px + env(safe-area-inset-bottom))}}
-@media(hover:none) and (pointer:coarse) and (max-height:690px){main{inset:45px 0 calc(66px + env(safe-area-inset-bottom))}.cue{bottom:calc(26px + env(safe-area-inset-bottom))}}
+.card.active:not(.curl-face)::after{content:'';position:absolute;right:0;bottom:0;width:34px;height:34px;background:linear-gradient(135deg,#eae3d7 50%,#fbfaf7 50%);box-shadow:-3px -3px 8px rgba(80,60,30,.10);animation:ear 2.4s ease-in-out infinite}
+@keyframes ear{0%,100%{width:34px;height:34px}50%{width:52px;height:52px}}
+@media(hover:none) and (pointer:coarse),(max-width:600px){nav,footer{display:none}.cue{display:block}.cover .hint{display:none}main{inset:60px 0 calc(78px + env(safe-area-inset-bottom))}}
+@media((hover:none) and (pointer:coarse)) and (max-height:690px),(max-width:600px) and (max-height:690px){main{inset:45px 0 calc(66px + env(safe-area-inset-bottom))}.cue{bottom:calc(26px + env(safe-area-inset-bottom))}}
 @media(max-height:690px){.map{margin-top:6px;font-size:10px}}
 @media(prefers-reduced-motion:reduce){.swipe,.card.active:not(.curl-face)::after{animation:none}}
 </style></head><body><header><a href="#" id="home">계절의 식탁</a><span>11월 21일</span></header><main id="deck" aria-label="초대장과 코스 메뉴"></main><p class="cue" id="cue" aria-hidden="true"><span id="cueText"></span><span class="swipe"></span></p><nav aria-label="카드 이동"><button id="prev" aria-label="이전 카드">↑</button><span id="count" aria-live="polite"></span><button id="next" aria-label="다음 카드">↓</button></nav><div class="rail" id="rail" aria-label="코스 바로가기"></div><footer>늦가을의 끝자락, 겨울의 문턱에서</footer><script>const courses=[
@@ -30,10 +31,21 @@ body{height:100dvh;overscroll-behavior:none}header{height:56px;padding:0 22px}ma
 ['깊은 여운','양고기 · 무 · 대파','양고기를 삶아낸 육수에 무와 대파를 더해, 오래 끓인 시간의 깊이를 한 그릇에 담았습니다.'],
 ['계절의 마지막 인사','','대장의 요청으로 디저트는 없습니다\n시켜드시죠']];
 const deck=document.querySelector('#deck');
-deck.innerHTML=`<article class="card cover"><p class="eyebrow">A TABLE BETWEEN SEASONS</p><div class="art"><img src="assets/menu/course-10.jpg" alt="늦가을 나뭇가지와 빈 접시, 따뜻한 차의 수채화"></div><div class="copy"><h1>당신을<br>초대합니다</h1><p class="desc">늦가을의 끝자락, 겨울의 문턱에서<br>따뜻한 시간을 함께 나누고 싶습니다.</p><p class="date">11월 21일</p><p class="hint">위로 쓸어 올려, 오늘의 식탁을 만나보세요</p><a class="map" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B8%88%EC%B2%9C%EA%B5%AC%20%EB%B2%9A%EA%BD%83%EB%A1%9C%20100" target="_blank" rel="noopener" aria-label="네이버 지도에서 서울특별시 금천구 벚꽃로 100, 101동 1004호 보기">지도</a></div></article>`+courses.map(([title,ingredients,desc],i)=>`<article class="card future"><p class="eyebrow">${String(i+1).padStart(2,'0')} — ${i===9?'A LAST GREETING':'SEASONAL COURSE'}</p><div class="art"><img src="assets/menu/course-${String(i+1).padStart(2,'0')}.jpg" alt="${title}${ingredients?' — '+ingredients:''}" draggable="false"></div><div class="copy"><h2>${title}</h2>${ingredients?`<p class="ingredients">${ingredients}</p>`:''}<p class="desc">${desc}</p><div class="line"></div></div></article>`).join('');
+deck.innerHTML=`<article class="card cover"><p class="eyebrow">A TABLE BETWEEN SEASONS</p><div class="art"><img src="assets/menu/course-10.jpg" alt="늦가을 나뭇가지와 빈 접시, 따뜻한 차의 수채화"></div><div class="copy"><h1>당신을<br>초대합니다</h1><p class="desc">늦가을의 끝자락, 겨울의 문턱에서<br>따뜻한 시간을 함께 나누고 싶습니다.</p><p class="date">11월 21일</p><p class="hint">위로 쓸어 올려, 오늘의 식탁을 만나보세요</p><a class="map" href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B8%88%EC%B2%9C%EA%B5%AC%20%EB%B2%9A%EA%BD%83%EB%A1%9C%20100" target="_blank" rel="noopener" aria-label="네이버 지도에서 서울특별시 금천구 벚꽃로 100, 101동 1004호 보기">지도</a></div></article>`+courses.map(([title,ingredients,desc],i)=>`<article class="card future"><p class="eyebrow">${String(i+1).padStart(2,'0')} — ${i===9?'A LAST GREETING':'SEASONAL COURSE'}</p><div class="art"><img src="assets/menu/course-${String(i+1).padStart(2,'0')}.jpg" alt="${title}${ingredients?' — '+ingredients:''}" draggable="false"></div><div class="copy"><h2>${title}</h2>${ingredients?`<p class="ingredients">${ingredients}</p>`:''}<p class="desc">${desc}</p><div class="line"></div></div></article>`).join('')+`<article class="card note future"><p class="eyebrow">FROM THE KITCHEN</p><div class="copy"><h2>주방에서 드리는 당부</h2><p class="desc">제 손은 매우 느리기에
+음식이 매우 천천히 나옵니다.
+
+벨트 풀고 오시되
+집에 일찍 가긴 틀렸다는 마음으로 오시고
+
+참석자의 귀가보다
+제 요리가 우선이기에
+그냥 포기하고 오세요.
+
+그리고 맛없다 하면 진짜 상처받습니다.
+며칠 굶고 오시면 웬만하면 맛있습니다.</p><div class="line"></div></div></article>`;
 const cards=[...deck.children],prev=document.querySelector('#prev'),next=document.querySelector('#next'),count=document.querySelector('#count'),rail=document.querySelector('#rail'),cue=document.querySelector('#cue'),cueText=document.querySelector('#cueText');let current=0,last=0;
-rail.innerHTML=cards.map((_,i)=>`<button aria-label="${i?`${i}번 코스 ${courses[i-1][0]}`:'초대장 표지'}"></button>`).join('');
-function render(n){current=Math.max(0,Math.min(cards.length-1,n));cards.forEach((c,i)=>{c.classList.toggle('active',i===current);c.classList.toggle('past',i<current);c.classList.toggle('future',i>current);c.setAttribute('aria-hidden',i!==current);c.inert=i!==current});[...rail.children].forEach((b,i)=>b.setAttribute('aria-current',i===current));prev.disabled=current===0;next.disabled=current===cards.length-1;count.textContent=current?`${String(current).padStart(2,'0')} / 10`:'INVITATION';cueText.textContent=current===0?'위로 쓸어 올려, 오늘의 식탁을 만나보세요':current===cards.length-1?'아래로 쓸어 내리면 처음으로':'위로 쓸어 올려 다음 코스로';cue.classList.toggle('down',current===cards.length-1)}
+rail.innerHTML=cards.map((_,i)=>`<button aria-label="${i===0?'초대장 표지':courses[i-1]?`${i}번 코스 ${courses[i-1][0]}`:'주방에서 드리는 당부'}"></button>`).join('');
+function render(n){current=Math.max(0,Math.min(cards.length-1,n));cards.forEach((c,i)=>{c.classList.toggle('active',i===current);c.classList.toggle('past',i<current);c.classList.toggle('future',i>current);c.setAttribute('aria-hidden',i!==current);c.inert=i!==current});[...rail.children].forEach((b,i)=>b.setAttribute('aria-current',i===current));prev.disabled=current===0;next.disabled=current===cards.length-1;count.textContent=current===0?'INVITATION':current>courses.length?'P.S.':`${String(current).padStart(2,'0')} / ${courses.length}`;cueText.textContent=current===0?'위로 쓸어 올려, 오늘의 식탁을 만나보세요':current===cards.length-1?'아래로 쓸어 내리면 처음으로':current===courses.length?'위로 쓸어 올려, 주방에서 한마디':'위로 쓸어 올려 다음 코스로';cue.classList.toggle('down',current===cards.length-1)}
 let turning=false,gesture=null,fold=null;
 const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Clip the rectangular sheet into narrow bands perpendicular to the drag.
@@ -133,11 +145,11 @@ deck.addEventListener('pointermove',e=>{const g=gesture;if(!g||g.id!==e.pointerI
  if(fold){followDirection(dx,dy);paintFold(len);}
 });
 function release(e,cancel=false){const g=gesture;if(!g||g.id!==e.pointerId)return;gesture=null;
- if(fold){const threshold=Math.min(fold.w,fold.h)*.24;finishFold(!cancel&&fold.progress>threshold);}
+ if(fold){const threshold=(Math.abs(fold.ny)*fold.h+Math.abs(fold.nx)*fold.w)*.38;finishFold(!cancel&&fold.progress>threshold);}
  else if(!cancel&&reduce()&&g.dir&&Math.hypot(g.lastX-g.x,g.lastY-g.y)>70)render(current+g.dir);
  if(deck.hasPointerCapture(e.pointerId))deck.releasePointerCapture(e.pointerId);
 }
 deck.addEventListener('pointerup',e=>release(e));deck.addEventListener('pointercancel',e=>release(e,true));deck.addEventListener('lostpointercapture',e=>{if(gesture)release(e,true)});
 window.addEventListener('resize',()=>{if(fold){const f=fold;fold=null;f.layer.remove();render(f.old);}gesture=null;turning=false;});
-let wheelTotal=0,wheelTime=0;window.addEventListener('wheel',e=>{e.preventDefault();if(Date.now()-wheelTime>180)wheelTotal=0;wheelTime=Date.now();wheelTotal+=e.deltaY;if(Math.abs(wheelTotal)>45){step(wheelTotal>0?1:-1);wheelTotal=0}},{passive:false});window.addEventListener('keydown',e=>{if(['ArrowDown','PageDown',' ','ArrowUp','PageUp','Home','End'].includes(e.key)){e.preventDefault();if(e.key==='Home')go(0);else if(e.key==='End')go(10);else step(['ArrowUp','PageUp'].includes(e.key)?-1:1)}});render(0);
+let wheelTotal=0,wheelTime=0;window.addEventListener('wheel',e=>{e.preventDefault();if(Date.now()-wheelTime>180)wheelTotal=0;wheelTime=Date.now();wheelTotal+=e.deltaY;if(Math.abs(wheelTotal)>45){step(wheelTotal>0?1:-1);wheelTotal=0}},{passive:false});window.addEventListener('keydown',e=>{if(['ArrowDown','PageDown',' ','ArrowUp','PageUp','Home','End'].includes(e.key)){e.preventDefault();if(e.key==='Home')go(0);else if(e.key==='End')go(cards.length-1);else step(['ArrowUp','PageUp'].includes(e.key)?-1:1)}});render(0);
 </script></body></html>

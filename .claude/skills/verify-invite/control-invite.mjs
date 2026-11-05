@@ -245,12 +245,15 @@ async function runBrowserCommand(c, cmd, args, flags, log) {
       case "eval": return log(JSON.stringify(await c.eval(args.join(" "))));
       case "swipe": {
         const dir = args[0] === "down" ? 1 : -1;
-        const box = await c.eval(`(function(){var e=document.querySelector(".card.active")||document.body;var r=e.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`);
+        // --fraction 0.2 처럼 카드 높이 대비 끄는 거리를 지정할 수 있다. 기본 0.6 은 넘김 기준(0.38)을 넘고, 0.2 는 못 넘어 되돌아온다.
+        const fraction = Number(flags.fraction || 0.6);
+        const box = await c.eval(`(function(){var e=document.querySelector(".card.active")||document.body;var r=e.getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2,h:r.height}})()`);
+        const dist = Math.round(box.h * fraction), steps = 16;
         await c.send("Input.dispatchMouseEvent", { type: "mousePressed", x: box.x, y: box.y, button: "left", clickCount: 1 });
-        for (let i = 1; i <= 12; i++) { await c.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y + dir * i * 18, button: "left" }); await sleep(16); }
-        await c.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: box.x, y: box.y + dir * 216, button: "left", clickCount: 1 });
+        for (let i = 1; i <= steps; i++) { await c.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y + dir * Math.round(dist * i / steps), button: "left" }); await sleep(16); }
+        await c.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: box.x, y: box.y + dir * dist, button: "left", clickCount: 1 });
         await waitFor(`!document.querySelector(".curl-layer,.return-layer")`, "page turn to finish");
-        return log("swipe: " + (dir < 0 ? "up" : "down"));
+        return log(`swipe: ${dir < 0 ? "up" : "down"} ${dist}px (${fraction} of card height)`);
       }
       case "screenshot": {
         const out = path.resolve(ROOT, args[0]); fs.mkdirSync(path.dirname(out), { recursive: true });
@@ -301,7 +304,7 @@ async function cleanup() {
 
 // ---------- CLI ----------
 const argv = process.argv.slice(2); const flags = {}; const pos = [];
-for (let i = 0; i < argv.length; i++) { const a = argv[i]; if (a.startsWith("--")) { const k = a.slice(2); const next = argv[i + 1]; if (next !== undefined && !next.startsWith("--") && ["timeout", "js"].includes(k)) { flags[k] = next; i++; } else flags[k] = true; } else pos.push(a); }
+for (let i = 0; i < argv.length; i++) { const a = argv[i]; if (a.startsWith("--")) { const k = a.slice(2); const next = argv[i + 1]; if (next !== undefined && !next.startsWith("--") && ["timeout", "js", "fraction"].includes(k)) { flags[k] = next; i++; } else flags[k] = true; } else pos.push(a); }
 const [group, cmd, ...rest] = pos;
 if (group === "__serve") serveForever(!!flags.manual);
 else if (group === "__bridge") await bridgeForever();
