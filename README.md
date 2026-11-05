@@ -5,9 +5,11 @@
 ```
 config.js            파티 정보 · 손님 목록 · 답변 수집 설정 (여기만 고치면 됨)
 invites/*.html       손님별 초대장 (5장)
+menu.html            당일 손님에게 보내는 메뉴장 (10코스 카드, 위로 넘김)
 admin.html           호스트용 결과 확인 페이지 (임시)
-assets/              공통 스타일 · 스크립트
+assets/              공통 스타일 · 스크립트 · 메뉴장 그림 (assets/menu/)
 backend/Code.gs      구글 시트에 답변을 저장하는 Apps Script
+.claude/skills/      에이전트용 검증 스킬 (verify-invite, verify-rsvp-roundtrip)
 ```
 
 ## 1. 바로 써보기 (설정 없이)
@@ -38,6 +40,9 @@ backend/Code.gs      구글 시트에 답변을 저장하는 Apps Script
 GitHub Pages 가 가장 간단합니다: 저장소를 GitHub 에 올리고 **Settings → Pages → Branch: main / (root)** 를 켜면
 `https://<아이디>.github.io/<저장소>/invites/choi-jihye.html` 형태로 열립니다.
 `admin.html` 에 들어가면 손님별 링크를 복사할 수 있습니다.
+
+메뉴장은 초대장과 별개로 파티 당일 보냅니다. 같은 호스팅에서 `https://<아이디>.github.io/<저장소>/menu.html` 로 열립니다.
+표지의 "지도"를 누르면 네이버 지도에서 집 주소가 검색되고, 폰에서는 위로 쓸어 올려 다음 코스를 봅니다.
 
 > `admin.html` 은 링크를 아는 사람은 누구나 열 수 있는 임시 페이지입니다. 결과만 볼 수 있고, 손님 이름과 못 먹는 음식 정도의 정보만 있으니 파티가 끝나면 지워도 됩니다.
 
