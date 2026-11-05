@@ -13,12 +13,12 @@ body{height:100dvh;overscroll-behavior:none}header{height:56px;padding:0 22px}ma
 .cue{display:none;position:fixed;left:0;right:0;bottom:calc(34px + env(safe-area-inset-bottom));z-index:30;margin:0;text-align:center;font-size:10px;letter-spacing:.06em;color:#9a938c}.cue.down .swipe{--r:225deg;--dy:4px}
 @keyframes bob{0%,100%{transform:translateY(0) rotate(var(--r))}50%{transform:translateY(var(--dy)) rotate(var(--r))}}
 /* 카드 오른쪽 아래 모서리의 접힌 종이 귀 */
-.card.active:not(.curl-face)::after{content:'';position:absolute;right:0;bottom:0;width:34px;height:34px;background:linear-gradient(135deg,#eae3d7 50%,#fbfaf7 50%);box-shadow:-3px -3px 8px rgba(80,60,30,.10);animation:ear 2.4s ease-in-out infinite}
+.card.active:not(.curl-face):not(.note)::after{content:'';position:absolute;right:0;bottom:0;width:34px;height:34px;background:linear-gradient(135deg,#eae3d7 50%,#fbfaf7 50%);box-shadow:-3px -3px 8px rgba(80,60,30,.10);animation:ear 2.4s ease-in-out infinite}
 @keyframes ear{0%,100%{width:34px;height:34px}50%{width:52px;height:52px}}
 @media(hover:none) and (pointer:coarse),(max-width:600px){nav,footer{display:none}.cue{display:block}.cover .hint{display:none}main{inset:60px 0 calc(78px + env(safe-area-inset-bottom))}}
 @media((hover:none) and (pointer:coarse)) and (max-height:690px),(max-width:600px) and (max-height:690px){main{inset:45px 0 calc(66px + env(safe-area-inset-bottom))}.cue{bottom:calc(26px + env(safe-area-inset-bottom))}}
 @media(max-height:690px){.map{margin-top:6px;font-size:10px}}
-@media(prefers-reduced-motion:reduce){.swipe,.card.active:not(.curl-face)::after{animation:none}}
+@media(prefers-reduced-motion:reduce){.swipe,.card.active:not(.curl-face):not(.note)::after{animation:none}}
 </style></head><body><header><a href="#" id="home">계절의 식탁</a><span>11월 21일</span></header><main id="deck" aria-label="초대장과 코스 메뉴"></main><p class="cue" id="cue" aria-hidden="true"><span id="cueText"></span><span class="swipe"></span></p><nav aria-label="카드 이동"><button id="prev" aria-label="이전 카드">↑</button><span id="count" aria-live="polite"></span><button id="next" aria-label="다음 카드">↓</button></nav><div class="rail" id="rail" aria-label="코스 바로가기"></div><footer>늦가을의 끝자락, 겨울의 문턱에서</footer><script>const courses=[
 ['맑은 첫 인사','단새우 · 배 · 레몬 · 잣','단새우의 은은한 단맛에 아삭한 배와 레몬의 산뜻한 향을 더하고, 부드러운 잣소스로 첫 입을 엽니다.'],
 ['바다의 결','광어 · 들기름 · 깻잎','차가운 광어에 고소한 들기름을 입히고, 깻잎으로 향긋함을 더했습니다.'],
@@ -126,7 +126,7 @@ function paintFold(distance){
  f.layer.style.opacity=1-Math.max(0,(distance/f.extent-.83)/.17);
 }
 function finishFold(commit){
- if(!fold)return;turning=true;const f=fold,from=f.progress,to=commit?f.extent:0,t0=performance.now(),duration=commit?1300:650;
+ if(!fold)return;turning=true;const f=fold;f.commit=commit;const from=f.progress,to=commit?f.extent:0,t0=performance.now(),duration=commit?1300:650;
  function tick(t){if(fold!==f)return;const p=Math.min(1,(t-t0)/duration),ease=1-Math.pow(1-p,3);paintFold(from+(to-from)*ease);
  if(p<1)requestAnimationFrame(tick);else{f.layer.remove();render(commit?f.target:f.old);fold=null;turning=false;}}
  requestAnimationFrame(tick);
@@ -137,7 +137,9 @@ function go(n){n=Math.max(0,Math.min(cards.length-1,n));if(turning||gesture||n==
 }
 function step(d){if(turning||gesture)return;go(current+d)}
 prev.onclick=()=>step(-1);next.onclick=()=>step(1);[...rail.children].forEach((b,i)=>b.onclick=()=>go(i));document.querySelector('#home').onclick=e=>{e.preventDefault();go(0)};
-deck.addEventListener('pointerdown',e=>{if(turning||gesture||!e.isPrimary||e.button!==0||e.target.closest('a'))return;const r=cards[current].getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
+function snapFold(){const f=fold;if(!f)return;f.layer.remove();render(f.commit?f.target:f.old);fold=null;turning=false;}
+deck.addEventListener('pointerdown',e=>{if(turning&&fold&&fold.commit&&fold.progress/fold.extent>=.5)snapFold();
+ if(turning||gesture||!e.isPrimary||e.button!==0||e.target.closest('a'))return;const r=cards[current].getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)return;
  gesture={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY};deck.setPointerCapture(e.pointerId);
 });
 deck.addEventListener('pointermove',e=>{const g=gesture;if(!g||g.id!==e.pointerId)return;const dx=e.clientX-g.x,dy=e.clientY-g.y,len=Math.hypot(dx,dy);g.lastX=e.clientX;g.lastY=e.clientY;

@@ -252,8 +252,8 @@ async function runBrowserCommand(c, cmd, args, flags, log) {
         await c.send("Input.dispatchMouseEvent", { type: "mousePressed", x: box.x, y: box.y, button: "left", clickCount: 1 });
         for (let i = 1; i <= steps; i++) { await c.send("Input.dispatchMouseEvent", { type: "mouseMoved", x: box.x, y: box.y + dir * Math.round(dist * i / steps), button: "left" }); await sleep(16); }
         await c.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: box.x, y: box.y + dir * dist, button: "left", clickCount: 1 });
-        await waitFor(`!document.querySelector(".curl-layer,.return-layer")`, "page turn to finish");
-        return log(`swipe: ${dir < 0 ? "up" : "down"} ${dist}px (${fraction} of card height)`);
+        if (!flags.nowait) await waitFor(`!document.querySelector(".curl-layer,.return-layer")`, "page turn to finish");
+        return log(`swipe: ${dir < 0 ? "up" : "down"} ${dist}px (${fraction} of card height)${flags.nowait ? ", not waited" : ""}`);
       }
       case "screenshot": {
         const out = path.resolve(ROOT, args[0]); fs.mkdirSync(path.dirname(out), { recursive: true });
